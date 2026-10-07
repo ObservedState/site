@@ -1,0 +1,73 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# id-token: write lets the job exchange its GitHub OIDC token for AWS credentials.
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Needs package-lock.json committed (run `npm install` once locally).
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist
+          retention-days: 7
+
+  deploy:
+    needs: build
+    # Pull requests build only. Only main deploys.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Do not add `environment:` here without updating the IAM trust policy:
+    # it changes the OIDC `sub` claim from ref:refs/heads/main to environment:<name>.
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: dist
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync site to S3
+        run: |
+          # HTML and everything else: short cache, replaced on every deploy.
+          aws s3 sync dist/ "s3://${{ vars.S3_BUCKET }}/" \
+            --delete --exclude "_astro/*" \
+            --cache-control "public,max-age=300"
+          # Hashed build assets: cache for a year. No --delete, so pages that are
+          # still cached at the edge never point at assets that vanished.
+          aws s3 sync dist/_astro/ "s3://${{ vars.S3_BUCKET }}/_astro/" \
+            --cache-control "public,max-age=31536000,immutable"
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"

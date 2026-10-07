@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HubDiagram from '../components/HubDiagram.astro';
+import PostCard from '../components/PostCard.astro';
+import { SITE } from '../config';
+import { SPOKES, spokeMeta } from '../data/taxonomy';
+import { byDateDesc, getPublished } from '../lib/content';
+
+const posts = (await getPublished('writing')).sort(byDateDesc).slice(0, 4);
+---
+
+<BaseLayout>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">ServiceNow ITOM · CMDB · Cloud · IaC</p>
+        <h1>{SITE.tagline}</h1>
+        <p class="lede">{SITE.description}</p>
+        <div class="btn-row">
+          <a class="btn" href="/writing/">Read the field notes</a>
+          <a class="btn btn--ghost" href="/paths/">Browse the paths</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <HubDiagram />
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Declared state, observed state</h2>
+      </div>
+      <p class="lede">
+        Every environment has a declared version of itself: the template, the change record, the architecture diagram.
+        It also has an observed version: what Discovery, the cloud APIs and monitoring actually see. The CMDB is where
+        the two meet, and this site is about the work of reconciling them.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Latest writing</h2>
+        <a href="/writing/">All writing</a>
+      </div>
+      {
+        posts.length > 0 ? (
+          <ul class="post-list">
+            {posts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">The first notes are on their way.</p>
+        )
+      }
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>The spokes</h2>
+        <a href="/spokes/">How they connect to the hub</a>
+      </div>
+      <ul class="card-grid" style="list-style: none; padding: 0; margin: 0">
+        {
+          SPOKES.map((spoke) => (
+            <li class="card">
+              <p class="meta">{spokeMeta[spoke].role}</p>
+              <h3>
+                <a href={`/spokes/${spoke}/`}>{spokeMeta[spoke].label}</a>
+              </h3>
+              <p>{spokeMeta[spoke].blurb}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

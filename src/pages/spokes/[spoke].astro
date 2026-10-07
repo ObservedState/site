@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import PatternCard from '../../components/PatternCard.astro';
+import PathCard from '../../components/PathCard.astro';
+import { SPOKES, spokeMeta, type Spoke } from '../../data/taxonomy';
+import { byDateDesc, getPublished } from '../../lib/content';
+
+export function getStaticPaths() {
+  return SPOKES.map((spoke) => ({ params: { spoke } }));
+}
+
+const spoke = Astro.params.spoke as Spoke;
+const meta = spokeMeta[spoke];
+
+const posts = (await getPublished('writing')).filter((p) => p.data.spokes.includes(spoke)).sort(byDateDesc);
+const patterns = (await getPublished('patterns')).filter((p) => p.data.spokes.includes(spoke));
+const paths = (await getPublished('paths'))
+  .filter((p) => p.data.spokes.includes(spoke))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title={meta.label} description={meta.blurb}>
+  <div class="container section">
+    <p class="eyebrow">Spoke · {meta.role}</p>
+    <h1>{meta.label}</h1>
+    <p class="lede">{meta.blurb}</p>
+
+    <section class="section">
+      <div class="section-head"><h2>Writing</h2></div>
+      {
+        posts.length > 0 ? (
+          <ul class="post-list">
+            {posts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">Nothing published on this spoke yet.</p>
+        )
+      }
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>Integration patterns</h2></div>
+      {
+        patterns.length > 0 ? (
+          <ul class="card-grid" style="list-style: none; padding: 0; margin: 0">
+            {patterns.map((pattern) => (
+              <PatternCard pattern={pattern} />
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">No patterns documented for this spoke yet.</p>
+        )
+      }
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>Learning paths</h2></div>
+      {
+        paths.length > 0 ? (
+          <ul class="card-grid" style="list-style: none; padding: 0; margin: 0">
+            {paths.map((path) => (
+              <PathCard path={path} />
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">No learning paths for this spoke yet.</p>
+        )
+      }
+    </section>
+
+    <p><a href="/spokes/">← All spokes</a></p>
+  </div>
+</BaseLayout>

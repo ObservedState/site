@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config';
+
+// Placeholder copy. Rewrite in your own voice, and decide what you want public:
+// employer name, client names and contact details are deliberately left out.
+// Check your employment agreement's outside-activity and IP clauses before publishing.
+---
+
+<BaseLayout title="About" description="Who writes ObservedState and what this site is for.">
+  <div class="container section">
+    <p class="eyebrow">About</p>
+    <h1>About ObservedState</h1>
+    <div class="prose">
+      <p class="lede">
+        ObservedState is a working notebook on ServiceNow ITOM and the CMDB, and on everything that connects to them:
+        cloud, infrastructure as code, monitoring, data integration, and increasingly AI.
+      </p>
+
+      <h2>Who</h2>
+      <p>
+        I'm {SITE.author}, a ServiceNow Certified Technical Architect with 16 years of ServiceNow consulting and around
+        30 in IT overall. [Add two or three sentences in your own words.]
+      </p>
+
+      <h2>Why "observed state"</h2>
+      <p>
+        Infrastructure has a declared state (what the template, the change record or the architecture diagram says) and
+        an observed state (what is actually running). The gap between them is drift, and closing it is reconciliation.
+        The CMDB is where that reconciliation shows up, which is why it sits at the center of this site.
+      </p>
+
+      <h2>What you'll find here</h2>
+      <ul>
+        <li><a href="/writing/">Writing</a>: field notes, deep dives and teardowns.</li>
+        <li><a href="/patterns/">Patterns</a>: a catalog of integration patterns on one template.</li>
+        <li><a href="/paths/">Paths</a>: learning sequences for connecting ServiceNow to the cloud and beyond.</li>
+        <li><a href="/drift-log/">Drift Log</a>: my own learning journal, including what did not go to plan.</li>
+      </ul>
+
+      <h2>Elsewhere</h2>
+      <p>
+        Code and examples live on <a href={SITE.github}>GitHub</a>. [Add the contact method you want public.]
+      </p>
+    </div>
+  </div>
+</BaseLayout>

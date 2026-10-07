@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { byDateDesc, getPublished } from '../../lib/content';
+
+const posts = (await getPublished('writing')).sort(byDateDesc);
+---
+
+<BaseLayout title="Writing" description="Field notes, deep dives and teardowns on ServiceNow ITOM, the CMDB and the integrations around them.">
+  <div class="container section">
+    <p class="eyebrow">Writing</p>
+    <h1>Field notes and deep dives</h1>
+    <p class="lede">
+      Browse by <a href="/hub/">hub area</a> or by <a href="/spokes/">spoke</a>, or follow the
+      <a href="/rss.xml">RSS feed</a>.
+    </p>
+    {
+      posts.length > 0 ? (
+        <ul class="post-list" style="margin-top: 2rem">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </ul>
+      ) : (
+        <p class="empty" style="margin-top: 2rem">
+          Nothing published yet.
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>

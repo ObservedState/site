@@ -1,0 +1,19 @@
+---
+import { SITE } from '../config';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <p>© {year} {SITE.author}. {SITE.name} · {SITE.tagline}</p>
+      <p>Opinions are my own and do not represent my employer or my clients.</p>
+    </div>
+    <ul>
+      <li><a href={SITE.github}>GitHub</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+      <li><a href="/about/">About</a></li>
+    </ul>
+  </div>
+</footer>

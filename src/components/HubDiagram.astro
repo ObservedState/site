@@ -1,0 +1,109 @@
+---
+// The hub-and-spokes model as navigation: the center links to the Hub page,
+// each satellite links to its spoke page. Colors come from the theme tokens.
+import { spokeMeta, type Spoke } from '../data/taxonomy';
+
+interface Node {
+  spoke: Spoke;
+  x: number;
+  y: number;
+  labelY: number;
+}
+
+const nodes: Node[] = [
+  { spoke: 'iac', x: 240, y: 70, labelY: 44 },
+  { spoke: 'cloud', x: 401.7, y: 187.5, labelY: 160 },
+  { spoke: 'monitoring', x: 339.9, y: 377.5, labelY: 418 },
+  { spoke: 'data', x: 140.1, y: 377.5, labelY: 418 },
+  { spoke: 'automation-ai', x: 78.3, y: 187.5, labelY: 160 },
+];
+
+const short: Record<Spoke, string> = {
+  iac: 'IaC',
+  cloud: 'Cloud',
+  monitoring: 'Monitoring',
+  data: 'Data',
+  'automation-ai': 'Automation / AI',
+};
+---
+
+<svg
+  viewBox="0 0 480 480"
+  fill="none"
+  role="group"
+  aria-label="Hub and spokes: ITOM and the CMDB at the center, with five integration areas around it"
+>
+  <g class="spokes" stroke-width="2" stroke-linecap="round">
+    {nodes.map((n) => <line x1="240" y1="240" x2={n.x} y2={n.y}></line>)}
+  </g>
+
+  <a href="/hub/">
+    <title>ITOM and CMDB: the hub</title>
+    <circle cx="240" cy="240" r="44" class="center"></circle>
+    <text x="240" y="236" text-anchor="middle" class="center-label">ITOM</text>
+    <text x="240" y="256" text-anchor="middle" class="center-label">CMDB</text>
+  </a>
+
+  {
+    nodes.map((n) => (
+      <a href={`/spokes/${n.spoke}/`} class="spoke">
+        <title>{`${spokeMeta[n.spoke].label}: ${spokeMeta[n.spoke].role}`}</title>
+        <circle
+          cx={n.x}
+          cy={n.y}
+          r="12"
+          class={n.spoke === 'iac' ? 'node node--desired' : 'node'}
+          stroke-width="3"
+          stroke-dasharray={n.spoke === 'iac' ? '5 4' : undefined}
+        />
+        <text x={n.x} y={n.labelY} text-anchor="middle" class="label">
+          {short[n.spoke]}
+        </text>
+      </a>
+    ))
+  }
+</svg>
+
+<style>
+  svg {
+    width: 100%;
+    max-width: 30rem;
+    height: auto;
+  }
+  .spokes {
+    stroke: var(--line-strong);
+  }
+  .center {
+    fill: var(--panel);
+    stroke: var(--observed);
+    stroke-width: 3;
+  }
+  .center-label {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    fill: var(--text);
+  }
+  .node {
+    fill: var(--bg);
+    stroke: var(--text);
+  }
+  .node--desired {
+    stroke: var(--desired);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    fill: var(--text);
+  }
+  a:hover .node {
+    stroke: var(--observed);
+  }
+  a:hover .label {
+    fill: var(--observed);
+  }
+  a:focus-visible {
+    outline: 3px solid var(--observed);
+    outline-offset: 4px;
+  }
+</style>

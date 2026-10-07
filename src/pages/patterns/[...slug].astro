@@ -1,0 +1,80 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublished } from '../../lib/content';
+import { formatDate } from '../../lib/format';
+import { mechanismLabel, spokeMeta } from '../../data/taxonomy';
+
+export async function getStaticPaths() {
+  const patterns = await getPublished('patterns');
+  return patterns.map((pattern) => ({ params: { slug: pattern.id }, props: { pattern } }));
+}
+
+const { pattern } = Astro.props;
+const { data } = pattern;
+const { Content } = await render(pattern);
+---
+
+<BaseLayout title={data.title} description={data.summary} type="article" noindex={data.draft}>
+  <article class="container">
+    <header class="article-head">
+      <p class="eyebrow">Integration pattern</p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.summary}</p>
+      <ul class="chips" aria-label="Spokes">
+        {data.draft && <li class="chip chip--draft">draft</li>}
+        {
+          data.spokes.map((s) => (
+            <li>
+              <a class="chip" href={`/spokes/${s}/`}>
+                {spokeMeta[s].label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    <dl class="facts">
+      <dt>Direction</dt>
+      <dd>{data.direction}</dd>
+      <dt>Mechanism</dt>
+      <dd>{data.mechanism.map((m) => mechanismLabel[m]).join(', ')}</dd>
+      {
+        data.ciClasses.length > 0 && (
+          <>
+            <dt>CI classes</dt>
+            <dd>
+              {data.ciClasses.map((c, i) => (
+                <>
+                  <code>{c}</code>
+                  {i < data.ciClasses.length - 1 ? ', ' : ''}
+                </>
+              ))}
+            </dd>
+          </>
+        )
+      }
+      {
+        data.identificationKeys.length > 0 && (
+          <>
+            <dt>Identification keys</dt>
+            <dd>{data.identificationKeys.join(', ')}</dd>
+          </>
+        )
+      }
+      {
+        data.updatedDate && (
+          <>
+            <dt>Updated</dt>
+            <dd>{formatDate(data.updatedDate)}</dd>
+          </>
+        )
+      }
+    </dl>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

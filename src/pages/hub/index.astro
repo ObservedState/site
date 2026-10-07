@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { HUB_AREAS, hubAreaMeta } from '../../data/taxonomy';
+import { byDateDesc, getPublished } from '../../lib/content';
+
+const posts = (await getPublished('writing')).sort(byDateDesc);
+const sections = HUB_AREAS.map((area) => ({
+  area,
+  meta: hubAreaMeta[area],
+  posts: posts.filter((p) => p.data.hub === area),
+}));
+---
+
+<BaseLayout title="The hub" description="ServiceNow ITOM and the CMDB: the platform areas at the center of the site.">
+  <div class="container section">
+    <p class="eyebrow">The hub</p>
+    <h1>ServiceNow ITOM &amp; the CMDB</h1>
+    <p class="lede">
+      The platform at the center. Everything else on this site is either feeding it what <em>is</em>, declaring what
+      <em>should be</em>, or moving data between the two. See the <a href="/spokes/">spokes</a>.
+    </p>
+
+    {
+      sections.map((s) => (
+        <section class="section" id={s.area}>
+          <div class="section-head">
+            <h2>{s.meta.label}</h2>
+          </div>
+          <p class="muted">{s.meta.blurb}</p>
+          {s.posts.length > 0 ? (
+            <ul class="post-list">
+              {s.posts.map((post) => (
+                <PostCard post={post} />
+              ))}
+            </ul>
+          ) : (
+            <p class="empty">Nothing published here yet.</p>
+          )}
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>

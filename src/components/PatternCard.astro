@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { mechanismLabel } from '../data/taxonomy';
+
+interface Props {
+  pattern: CollectionEntry<'patterns'>;
+}
+
+const { pattern } = Astro.props;
+const { data } = pattern;
+---
+
+<li class="card">
+  <p class="meta">{data.direction}</p>
+  <h3><a href={`/patterns/${pattern.id}/`}>{data.title}</a></h3>
+  <p>{data.summary}</p>
+  <ul class="chips" aria-label="Mechanism">
+    {data.draft && <li class="chip chip--draft">draft</li>}
+    {data.mechanism.map((m) => <li class="chip">{mechanismLabel[m]}</li>)}
+  </ul>
+</li>

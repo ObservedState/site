@@ -1,0 +1,56 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublished } from '../../lib/content';
+import { levelLabel, spokeMeta, stepKindLabel } from '../../data/taxonomy';
+
+export async function getStaticPaths() {
+  const paths = await getPublished('paths');
+  return paths.map((path) => ({ params: { slug: path.id }, props: { path } }));
+}
+
+const { path } = Astro.props;
+const { data } = path;
+const { Content } = await render(path);
+---
+
+<BaseLayout title={data.title} description={data.description} noindex={data.draft}>
+  <article class="container">
+    <header class="article-head">
+      <p class="eyebrow">Learning path · {levelLabel[data.level]}</p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.description}</p>
+      <p class="muted">For: {data.audience}</p>
+      <ul class="chips" aria-label="Spokes">
+        {data.draft && <li class="chip chip--draft">draft</li>}
+        {
+          data.spokes.map((s) => (
+            <li>
+              <a class="chip" href={`/spokes/${s}/`}>
+                {spokeMeta[s].label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    <ol class="steps">
+      {
+        data.steps.map((step) => (
+          <li>
+            <div>
+              <span class="step-title">{step.url ? <a href={step.url}>{step.title}</a> : step.title}</span>
+              <span class="chip">{stepKindLabel[step.kind]}</span>
+              {step.note && <p class="step-note">{step.note}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="prose" style="margin-top: 2rem">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

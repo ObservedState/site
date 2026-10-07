@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { levelLabel } from '../data/taxonomy';
+
+interface Props {
+  path: CollectionEntry<'paths'>;
+}
+
+const { path } = Astro.props;
+const { data } = path;
+---
+
+<li class="card">
+  <p class="meta">{data.audience} · {levelLabel[data.level]}</p>
+  <h3><a href={`/paths/${path.id}/`}>{data.title}</a></h3>
+  <p>{data.description}</p>
+  <ul class="chips" aria-label="Path details">
+    {data.draft && <li class="chip chip--draft">draft</li>}
+    <li class="chip">{data.steps.length} {data.steps.length === 1 ? 'step' : 'steps'}</li>
+  </ul>
+</li>

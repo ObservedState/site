@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HubDiagram from '../../components/HubDiagram.astro';
+import { SPOKES, spokeMeta } from '../../data/taxonomy';
+---
+
+<BaseLayout
+  title="Spokes"
+  description="Cloud providers, infrastructure as code, monitoring, data integration and automation: how each connects to ServiceNow ITOM and the CMDB."
+>
+  <div class="container section">
+    <p class="eyebrow">Spokes</p>
+    <h1>How everything connects to the hub</h1>
+    <p class="lede">
+      Each spoke either feeds the platform what is running, declares what should be running, or moves data and
+      decisions between them.
+    </p>
+
+    <div class="hero" style="padding-block: 1.5rem">
+      <div class="hero-art">
+        <HubDiagram />
+      </div>
+      <ul class="card-grid" style="flex: 2 1 24rem; list-style: none; padding: 0; margin: 0">
+        {
+          SPOKES.map((spoke) => (
+            <li class="card">
+              <p class="meta">{spokeMeta[spoke].role}</p>
+              <h3>
+                <a href={`/spokes/${spoke}/`}>{spokeMeta[spoke].label}</a>
+              </h3>
+              <p>{spokeMeta[spoke].blurb}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</BaseLayout>

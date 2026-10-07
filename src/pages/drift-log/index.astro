@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { byDateDesc, getPublished } from '../../lib/content';
+
+const entries = (await getPublished('writing')).filter((p) => p.data.format === 'drift-log').sort(byDateDesc);
+---
+
+<BaseLayout
+  title="Drift Log"
+  description="A running journal of learning AWS, infrastructure as code and applied AI from an operations seat, including what did not go to plan."
+>
+  <div class="container section">
+    <p class="eyebrow">Drift Log</p>
+    <h1>Drift Log</h1>
+    <p class="lede">
+      My declared plan says one thing and the calendar says another. This is the running record of what I set out to
+      learn, what I actually did, and the gap between the two. Current focus is on <a href="/now/">Now</a>.
+    </p>
+    {
+      entries.length > 0 ? (
+        <ul class="post-list" style="margin-top: 2rem">
+          {entries.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </ul>
+      ) : (
+        <p class="empty" style="margin-top: 2rem">
+          The first entry is coming.
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>

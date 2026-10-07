@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Update this quarterly. Plain edits to the lists below are the whole workflow.
+const updated = 'October 2026';
+const learning = ['[What you are studying this quarter]'];
+const building = ['[What you are building this quarter]'];
+const writing = ['[What is next on the writing list]'];
+---
+
+<BaseLayout title="Now" description="What I'm learning, building and writing this quarter.">
+  <div class="container section">
+    <p class="eyebrow">Now · updated {updated}</p>
+    <h1>Now</h1>
+    <div class="prose">
+      <h2>Learning</h2>
+      <ul>{learning.map((item) => <li>{item}</li>)}</ul>
+      <h2>Building</h2>
+      <ul>{building.map((item) => <li>{item}</li>)}</ul>
+      <h2>Writing</h2>
+      <ul>{writing.map((item) => <li>{item}</li>)}</ul>
+      <p class="muted">The longer-running story is in the <a href="/drift-log/">Drift Log</a>.</p>
+    </div>
+  </div>
+</BaseLayout>
