@@ -45,7 +45,7 @@ jobs:
     # Do not add `environment:` here without updating the IAM trust policy:
     # it changes the OIDC `sub` claim from ref:refs/heads/main to environment:<name>.
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: site
           path: dist
