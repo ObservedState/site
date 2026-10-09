@@ -1039,7 +1039,7 @@ Then send yourself a test message.
 ## Day-to-day workflow
 
 ```powershell
-Set-Location C:\dev\site
+Set-Location C:\Users\rook\Desktop\OS.dev\site
 git switch main
 git pull
 git switch -c post-my-topic
@@ -1071,7 +1071,7 @@ The merge to `main` deploys.
 **Every few months, rotate the `observedstate` access key:**
 
 ```powershell
-Set-Location C:\dev\site
+Set-Location C:\Users\rook\Desktop\OS.dev\site
 . .\docs\session.ps1
 Use-AwsProfile observedstate
 aws iam list-access-keys --user-name observedstate --query "AccessKeyMetadata[].[AccessKeyId,CreateDate,Status]" --output text

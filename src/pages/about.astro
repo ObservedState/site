@@ -2,32 +2,85 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config';
 
-// Placeholder copy. Rewrite in your own voice, and decide what you want public:
-// employer name, client names and contact details are deliberately left out.
-// Check your employment agreement's outside-activity and IP clauses before publishing.
+// About page. 
 ---
 
-<BaseLayout title="About" description="Who writes ObservedState and what this site is for.">
+<BaseLayout title="About" description="Who and why: a personal blog for learning and skill-building.">
   <div class="container section">
     <p class="eyebrow">About</p>
-    <h1>About ObservedState</h1>
+    <h1>About ObservedState.dev</h1>
     <div class="prose">
       <p class="lede">
-        ObservedState is a working notebook on ServiceNow ITOM and the CMDB, and on everything that connects to them:
-        cloud, infrastructure as code, monitoring, data integration, and increasingly AI.
+        ObservedState.dev is a personal learning notebook. It is where I practice, build skills and write down what I am
+        working out about ServiceNow ITOM and the CMDB, and about the cloud, infrastructure as code, monitoring and AI
+        that connect to them.
+      </p>
+      <p>
+        Backing this site, and occasionally made visible through the writing, is an AWS environment and a ServiceNow personal
+        development instance (PDI) where labs, learning and testing happen. In addition, when studying integrations, where
+        I can, I will stand up and link those systems.
       </p>
 
       <h2>Who</h2>
       <p>
-        I'm {SITE.author}, a ServiceNow Certified Technical Architect with 16 years of ServiceNow consulting and around
-        30 in IT overall. [Add two or three sentences in your own words.]
+        I'm {SITE.author}, known by many as Rook. I have spent around 30 years in IT, the last 16 of them working with ServiceNow, and I hold
+        the ServiceNow Certified Technical Architect (CTA) credential.
+      </p>
+      <p>
+        Before I became a ServiceNow consultant, my work was in UNIX and Linux administration and in SOC/NOC Operations. That background is
+        why I keep coming back to the same question: what is really running, and how do we know?
+      </p>
+
+      <h2>Why this site exists</h2>
+      <p>
+        That well-known platform that I have worked in now for 16 years sits next to a much larger world of cloud services and automation, 
+        and the best way to keep learning is to build in it and write about it. I feel like the blog writing will force me to be precise, and a
+        public blog keeps me honest. Most of what you will find here started as a learning exercise: a lab I built, something 
+        that I wanted to understand better, or a finding worth mentioning.
+      </p>
+      <p>
+        Already one of these learning processes is visible in how this site is built. It is a small static site on AWS, deployed 
+        through a pipeline with no stored credentials, and the runbook for it is public in the
+        <a href={SITE.github}>GitHub repository</a>.
+      </p>
+
+      <h2>Today and the Professional Future</h2>
+      <ul>
+        <li><strong>ServiceNow Certified Technical Architect (CTA)</strong>, is my main ServiceNow Expert-level credential.</li>
+        <li>Servicenow CIS - Discovery</li>
+        <li>Servicenow CIS - Event Management</li>
+        <li>Servicenow CIS - Service Mapping</li>
+        <li>Servicenow CIS - Data Foundations (CMDB/CSDM)</li>
+        <li>Servicenow CIS - ITSM</li>
+        <li>I do hold the ServiceNow Suite Certification for ITOM AIOps (all of them, there's a few).</li>
+        <li>
+          <strong>AWS Certified Solutions Architect &ndash; Associate</strong> and
+          <strong>AWS Certified CloudOps Engineer &ndash; Associate</strong> (formerly SysOps Administrator). Both have
+          lapsed, and part of what this site records is my path back to current AWS certifications.
+        </li>
+      </ul>
+      <p>
+        My approach to Certifications is to use them to structure and guide my learning, because I strongly believe that in the 
+        real wold, simply having Certifications is not enough. I would rather show you a working lab or completed projects
+        than a badge.  With that said, people search for Certifications in customer and recruiter conversations, so one can't just 
+        ignore them. 
+      </p>
+
+      <h2>What this site is, and is not</h2>
+      <p>
+        ObservedState is a personal project for learning and professional development. It is <strong>not</strong> a
+        consultancy, it does not offer services, and I do not take on work through it. The opinions here are mine alone
+        and are not those of any employer or client. Nothing here describes any employer's or client's systems, data
+        or plans: every example comes from my own labs, public documentation or generic patterns.
       </p>
 
       <h2>Why "observed state"</h2>
       <p>
-        Infrastructure has a declared state (what the template, the change record or the architecture diagram says) and
-        an observed state (what is actually running). The gap between them is drift, and closing it is reconciliation.
-        The CMDB is where that reconciliation shows up, which is why it sits at the center of this site.
+        Infrastructure has a declared state (what the IaC template, the Change record or the architecture diagram says) and
+        an observed state (what is actually found by running active commands against the device or environment). 
+        The gap between these two things is drift, and closing it is what we call reconciliation.
+        In Operations, the CMDB is where the drift shows up, where the reconciliation has to happen, and 
+        this is why the concept of CMDB sits at the center of this site.
       </p>
 
       <h2>What you'll find here</h2>
@@ -40,7 +93,7 @@ import { SITE } from '../config';
 
       <h2>Elsewhere</h2>
       <p>
-        Code and examples live on <a href={SITE.github}>GitHub</a>. [Add the contact method you want public.]
+        Code and examples will live on <a href={SITE.github}>GitHub</a>, and where applicable, linked from here.
       </p>
     </div>
   </div>
