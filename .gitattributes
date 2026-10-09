@@ -1,6 +1,4 @@
-@"
 * text=auto eol=lf
 *.png binary
 *.ico binary
 *.zip binary
-"@ | Set-Content -Path .gitattributes -Encoding utf8

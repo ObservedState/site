@@ -54,6 +54,7 @@ function Use-AwsProfile {
         throw "WRONG ACCOUNT. Profile '$Name' is in account $account, but the expected account is $ExpectedAccount. Nothing was changed."
     }
     $global:Tokens['ACCOUNT_ID'] = $account
+    $global:acct = $account   # used as ${acct} in the runbook's ARNs and --account-id arguments
     Write-Host "OK  profile=$Name  account=$account  identity=$arn" -ForegroundColor Green
 }
 
