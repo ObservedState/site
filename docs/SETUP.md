@@ -579,6 +579,7 @@ This uses `stacknimbus-rook` and a `Project` tag filter. The email is read from 
 
 ```powershell
 Use-AwsProfile $AdminProfile
+$acct = $Tokens['ACCOUNT_ID']
 $b  = Render-Template 'budget.json'
 $bn = Render-Template 'budget-notifications.json'
 aws budgets create-budget --account-id $acct --budget $b --notifications-with-subscribers $bn
@@ -1178,6 +1179,11 @@ Delete the boundary only after every role that uses it is gone, or AWS refuses. 
 | `WRONG ACCOUNT` from `Use-AwsProfile` | The profile is in a different account than the one pinned in `docs\local.ps1` | Fix the profile or the pinned ID. Do not work around the guard. |
 | `NoSuchEntity … Scope ARN … policy/observedstate-boundary does not exist or is not attachable` on `create-role` | The CLI is in a different account than the one holding the boundary policy | `aws sts get-caller-identity`, then `Use-AwsProfile observedstate` |
 | `create-role` returns AccessDenied | `--permissions-boundary` missing or wrong | Use the command in 7.7 exactly |
+| `OperationAborted` on `create-bucket` right after deleting a bucket of the same name | S3 holds a deleted bucket name for a while, longer when the new bucket is in another region | Retry every few minutes (it took about an hour once). Nothing else is wrong. |
+| `... is not digitally signed` when loading `session.ps1` | Files from a downloaded zip carry the "from the internet" mark | `Unblock-File` on the file, or on the whole repo: `Get-ChildItem <repo> -Recurse -File \| Unblock-File`, with the execution policy from Step 1 |
+| `argument --account-id: expected one argument` | `$acct` is empty because `session.ps1` is old or `Use-AwsProfile` has not run in this window | Load the current `session.ps1`, run `Use-AwsProfile`, then `$acct = $Tokens['ACCOUNT_ID']` |
+| `X is not a valid attribute name: .gitattributes:N` | `.gitattributes` was written with a byte-order mark or stray characters | Rewrite it with `Write-LfFile` as in Step 3.3 |
+| The distribution origin is a regional S3 name in the wrong region | The bucket was created in the wrong region | Recreate the bucket in us-east-1 and edit the origin to `<bucket>.s3.us-east-1.amazonaws.com` |
 | `Unreplaced placeholders in …` from `Render-Template` | A value was not looked up yet | `Restore-State`, or finish the earlier step that creates it (certificate, distribution) |
 | `tofu init` cannot find the bucket | Wrong bucket name, region or profile | `Use-AwsProfile observedstate`, then `aws s3 ls` |
 | `tofu` complains about `use_lockfile` | OpenTofu older than 1.10 | `winget upgrade OpenTofu.Tofu` |
