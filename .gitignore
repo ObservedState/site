@@ -5,3 +5,5 @@ dist/
 .env.*
 .DS_Store
 *.log
+docs/rendered/
+docs/local.ps1

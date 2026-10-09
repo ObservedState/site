@@ -1,0 +1,7 @@
+{
+  "BudgetName": "observedstate-monthly",
+  "BudgetType": "COST",
+  "TimeUnit": "MONTHLY",
+  "BudgetLimit": { "Amount": "10", "Unit": "USD" },
+  "CostFilters": { "TagKeyValue": ["user:Project$observedstate"] }
+}
