@@ -1,0 +1,37 @@
+{
+  "Comment": "observedstate.dev apex and www aliases to CloudFront",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "observedstate.dev.",
+        "Type": "A",
+        "AliasTarget": { "HostedZoneId": "Z2FDTNDATAQYW2", "DNSName": "__DISTRIBUTION_DOMAIN__.", "EvaluateTargetHealth": false }
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "observedstate.dev.",
+        "Type": "AAAA",
+        "AliasTarget": { "HostedZoneId": "Z2FDTNDATAQYW2", "DNSName": "__DISTRIBUTION_DOMAIN__.", "EvaluateTargetHealth": false }
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "www.observedstate.dev.",
+        "Type": "A",
+        "AliasTarget": { "HostedZoneId": "Z2FDTNDATAQYW2", "DNSName": "__DISTRIBUTION_DOMAIN__.", "EvaluateTargetHealth": false }
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "www.observedstate.dev.",
+        "Type": "AAAA",
+        "AliasTarget": { "HostedZoneId": "Z2FDTNDATAQYW2", "DNSName": "__DISTRIBUTION_DOMAIN__.", "EvaluateTargetHealth": false }
+      }
+    }
+  ]
+}

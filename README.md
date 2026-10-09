@@ -44,7 +44,7 @@ src/
   styles/global.css    design tokens (dark "Signal", light "Daylight") and base styles
 public/                favicons, social card, manifest, robots.txt
 infra/                 cloudfront-rewrite.js (needed for directory URLs on S3)
-docs/DEPLOY.md         one-time AWS and GitHub setup
+docs/SETUP.md          the single setup runbook (AWS, GitHub, policies)
 .github/workflows/     build on PRs, build and deploy on main
 ```
 
@@ -75,7 +75,7 @@ Body in Markdown.
 
 ## Deploying
 
-See [docs/DEPLOY.md](docs/DEPLOY.md). In short: S3 + CloudFront + ACM + Route 53 once, then every push to `main` deploys.
+See [docs/SETUP.md](docs/SETUP.md). In short: S3 + CloudFront + ACM + Route 53 once, then every push to `main` deploys.
 
 ## Design
 

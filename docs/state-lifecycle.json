@@ -1,0 +1,10 @@
+{
+  "Rules": [
+    {
+      "ID": "expire-old-state-versions",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "" },
+      "NoncurrentVersionExpiration": { "NoncurrentDays": 90 }
+    }
+  ]
+}
