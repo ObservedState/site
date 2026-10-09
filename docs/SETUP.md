@@ -904,7 +904,7 @@ aws iam get-role --role-name observedstate-site-deploy --query "Role.[Arn,Permis
 
 **Checkpoint:** the last command prints the role ARN and then the `observedstate-boundary` ARN. If `create-role` returns AccessDenied, the `--permissions-boundary` argument was missing or mistyped: your policy only allows roles created with it. If it says the role already exists, update instead: `aws iam update-assume-role-policy --role-name observedstate-site-deploy --policy-document $trust` and re-run the `put-role-policy` line.
 
-**Trust policy trap:** the `sub` condition is `repo:ObservedState/site:ref:refs/heads/main`, case-sensitive. If you ever add `environment:` to the workflow's deploy job, GitHub changes the claim to `repo:ObservedState/site:environment:<name>` and the role refuses until you update the trust policy. The deploy workflow deliberately has no `environment:`.
+**Trust policy trap:** the `sub` condition must match what GitHub puts in the token, and that depends on the repository. Newer repositories use GitHub's **immutable** form, `repo:ObservedState@<owner id>/site@<repo id>:ref:refs/heads/main`, and older ones use `repo:ObservedState/site:ref:refs/heads/main`. `Restore-State` asks GitHub which one applies (`gh api repos/ObservedState/site/actions/oidc/customization/sub`) and stores the prefix as `SUB_PREFIX`, which `docs\trust-policy.json` uses. If you rebuild the repository, run `Restore-State` again before creating the role. If you ever add `environment:` to the workflow's deploy job, GitHub changes the claim to end in `:environment:<name>` and the role refuses until you update the trust policy. The deploy workflow deliberately has no `environment:`.
 
 ### 7.8 Wait for CloudFront to finish deploying
 
@@ -1190,7 +1190,7 @@ Delete the boundary only after every role that uses it is gone, or AWS refuses. 
 | `AccessDenied` on `tofu plan` or `apply`, naming an action on an `observedstate-*` resource | The operator policy lacks that action | As `$AdminProfile`, add the action to `docs\operator-policy.json`, then create a new policy version (5.5) |
 | `AccessDenied` naming anything else | The fence working | Stop and think before widening it |
 | `gh variable list` shows values, but the workflow gets empty ones | They are environment variables, not repository variables | Step 8.1 |
-| Workflow fails: `Not authorized to perform sts:AssumeRoleWithWebIdentity` | Trust policy `sub` does not match, or `environment:` was added to the workflow | Compare `repo:ObservedState/site:ref:refs/heads/main` in `docs\trust-policy.json`, case included |
+| Workflow fails: `Not authorized to perform sts:AssumeRoleWithWebIdentity` | Trust policy `sub` does not match, or `environment:` was added to the workflow | Run `gh api repos/ObservedState/site/actions/oidc/customization/sub`. If `use_immutable_subject` is `true`, the trust policy must use its `sub_claim_prefix` followed by `:ref:refs/heads/main`. Run `Restore-State`, re-render `trust-policy.json` and `aws iam update-assume-role-policy`. |
 | Workflow fails with `AccessDenied` on S3 | Deploy role or boundary does not match the bucket name | Bucket must start `observedstate-`. Compare with `S3_BUCKET` |
 | Site returns `AccessDenied` from CloudFront | Bucket policy does not match the distribution | Re-run 7.5 |
 | `/spokes/cloud/` returns an error | Function missing or not attached to viewer request | 7.3 and 7.4 step 16 |

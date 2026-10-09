@@ -65,6 +65,15 @@ function Restore-State {
 
     if ($SiteRepo) { $global:Tokens['SITE_REPO'] = $SiteRepo } else { $global:Tokens['SITE_REPO'] = 'site' }
     if ($AlertEmail) { $global:Tokens['ALERT_EMAIL'] = $AlertEmail }
+
+    # The GitHub OIDC "sub" claim prefix. Newer repositories use GitHub's immutable form,
+    # repo:<owner>@<owner id>/<repo>@<repo id>; older ones use repo:<owner>/<repo>. Ask GitHub which.
+    $prefix = "repo:ObservedState/$($global:Tokens['SITE_REPO'])"
+    try {
+        $cust = gh api "repos/ObservedState/$($global:Tokens['SITE_REPO'])/actions/oidc/customization/sub" 2>$null | ConvertFrom-Json
+        if ($cust -and $cust.use_immutable_subject -and $cust.sub_claim_prefix) { $prefix = $cust.sub_claim_prefix }
+    } catch { }
+    $global:Tokens['SUB_PREFIX'] = $prefix
     $global:Tokens['SITE_BUCKET']  = "observedstate-site-$acct"
     $global:Tokens['STATE_BUCKET'] = "observedstate-tfstate-$acct"
 
