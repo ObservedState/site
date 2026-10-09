@@ -45,6 +45,7 @@ src/
 public/                favicons, social card, manifest, robots.txt
 infra/                 cloudfront-rewrite.js (needed for directory URLs on S3)
 docs/SETUP.md          the single setup runbook (AWS, GitHub, policies)
+docs/*.drawio.svg       editable diagrams (draw.io): hosting, pipeline, accounts
 .github/workflows/     build on PRs, build and deploy on main
 ```
 
@@ -75,7 +76,13 @@ Body in Markdown.
 
 ## Deploying
 
-See [docs/SETUP.md](docs/SETUP.md). In short: S3 + CloudFront + ACM + Route 53 once, then every push to `main` deploys.
+See [docs/SETUP.md](docs/SETUP.md).
+
+![Hosting architecture](docs/architecture-hosting.drawio.svg)
+
+Deploy pipeline: [docs/pipeline-deploy.drawio.svg](docs/pipeline-deploy.drawio.svg). Account and permission fence: [docs/architecture-accounts.drawio.svg](docs/architecture-accounts.drawio.svg).
+
+In short: S3 + CloudFront + ACM + Route 53 once, then every push to `main` deploys.
 
 ## Design
 
