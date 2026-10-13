@@ -1,4 +1,4 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, reference, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import {
   DIRECTIONS,
@@ -6,6 +6,7 @@ import {
   HUB_AREAS,
   LEVELS,
   MECHANISMS,
+  NOTE_STATUSES,
   SPOKES,
   STEP_KINDS,
 } from './data/taxonomy';
@@ -67,4 +68,27 @@ const paths = defineCollection({
   }),
 });
 
-export const collections = { writing, patterns, paths };
+// Lab notes: working notes from study and labs, published at /notes/.
+// Kept out of the homepage, /writing/, the hub and spoke pages, and the main RSS feed.
+// The pattern skips files starting with "_" (e.g. _TEMPLATE.md).
+const notes = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/notes' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string().max(200).optional(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    status: z.enum(NOTE_STATUSES).default('seedling'),
+    hub: z.enum(HUB_AREAS).optional(),
+    spokes: z.array(z.enum(SPOKES)).default([]),
+    // Free-form, unlike the rest of the taxonomy: notes are allowed to be messy.
+    tags: z.array(z.string()).default([]),
+    // The learning path this note belongs to, by filename without .md.
+    path: reference('paths').optional(),
+    // Set when the note has grown into a post, by filename without .md.
+    promotedTo: reference('writing').optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { writing, patterns, paths, notes };

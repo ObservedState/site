@@ -1,0 +1,93 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublished } from '../../lib/content';
+import { formatDate, isoDate } from '../../lib/format';
+import { hubAreaMeta, noteStatusMeta, spokeMeta } from '../../data/taxonomy';
+import { SITE } from '../../config';
+
+export async function getStaticPaths() {
+  const notes = await getPublished('notes');
+  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+}
+
+const { note } = Astro.props;
+const { data } = note;
+const { Content } = await render(note);
+const status = noteStatusMeta[data.status];
+
+// Only link to a path or post if its page is actually built (drafts are not, in production).
+const isLive = (entry?: { data: { draft: boolean } }) => !!entry && (import.meta.env.DEV || !entry.data.draft);
+const pathEntry = data.path ? await getEntry(data.path) : undefined;
+const promoted = data.promotedTo ? await getEntry(data.promotedTo) : undefined;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.summary ?? `Lab note: ${data.title}`}
+  type="article"
+  noindex={data.draft}
+  feed={{ title: `${SITE.name} Lab Notes`, href: '/notes/rss.xml' }}
+>
+  <article class="container">
+    <header class="article-head">
+      <p class="meta">
+        <a href="/notes/">Lab note</a>
+        · <time datetime={isoDate(data.pubDate)}>{formatDate(data.pubDate)}</time>
+        {
+          data.updatedDate && (
+            <>
+              · updated <time datetime={isoDate(data.updatedDate)}>{formatDate(data.updatedDate)}</time>
+            </>
+          )
+        }
+      </p>
+      <h1>{data.title}</h1>
+      {data.summary && <p class="lede">{data.summary}</p>}
+      <ul class="chips" aria-label="Note details">
+        {data.draft && <li class="chip chip--draft">draft</li>}
+        <li class={`chip chip--${data.status}`}>{status.label}</li>
+        {data.hub && <li><a class="chip chip--hub" href={`/hub/#${data.hub}`}>{hubAreaMeta[data.hub].label}</a></li>}
+        {
+          data.spokes.map((s) => (
+            <li>
+              <a class="chip" href={`/spokes/${s}/`}>
+                {spokeMeta[s].label}
+              </a>
+            </li>
+          ))
+        }
+        {data.tags.map((tag) => <li class="chip">#{tag}</li>)}
+      </ul>
+    </header>
+
+    <aside class="note-banner" aria-label="About this note">
+      {
+        isLive(promoted) && promoted ? (
+          <p>
+            <strong>This note grew into a post:</strong>{' '}
+            <a href={`/writing/${promoted.id}/`}>{promoted.data.title}</a>. Read that one; this is the rough version.
+          </p>
+        ) : (
+          <p>
+            <strong>Working note · {status.label}.</strong> {status.blurb} Polished writing lives in{' '}
+            <a href="/writing/">Writing</a>.
+          </p>
+        )
+      }
+      {
+        isLive(pathEntry) && pathEntry && (
+          <p>
+            Part of the learning path <a href={`/paths/${pathEntry.id}/`}>{pathEntry.data.title}</a>.
+          </p>
+        )
+      }
+    </aside>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <p><a href="/notes/">← All lab notes</a></p>
+  </article>
+</BaseLayout>

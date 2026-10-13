@@ -33,13 +33,14 @@ The schemas in `src/content.config.ts` are built from those lists, so a typo in 
 src/
   config.ts            site name, tagline, nav, author byline
   data/taxonomy.ts     the taxonomy above
-  content.config.ts    schemas for the three collections
+  content.config.ts    schemas for the four collections
   content/
     writing/           posts          -> /writing/<slug>/
     patterns/          integration patterns, one template -> /patterns/<slug>/
     paths/             learning paths -> /paths/<slug>/
-  pages/               routes (home, hub, spokes, writing, patterns, paths, drift-log, about, now, 404, rss.xml)
-  components/          Header, Footer, HubMark, HubDiagram, PostCard, PatternCard, PathCard
+    notes/             lab notes      -> /notes/<slug>/
+  pages/               routes (home, hub, spokes, writing, patterns, paths, notes, drift-log, about, now, 404, rss.xml, notes/rss.xml)
+  components/          Header, Footer, HubMark, HubDiagram, PostCard, PatternCard, PathCard, NoteCard
   layouts/BaseLayout.astro
   styles/global.css    design tokens (dark "Signal", light "Daylight") and base styles
 public/                favicons, social card, manifest, robots.txt
@@ -71,8 +72,24 @@ Body in Markdown.
 - **Drafts:** `draft: true` shows the item in `npm run dev` only. All the seed files start as drafts, so nothing half-written ships. The production site stays mostly empty until you flip a few to `false`.
 - **Patterns:** copy `src/content/patterns/aws-to-cmdb-sgc.md`, which doubles as the template. Keep the headings identical so every pattern reads the same way.
 - **Paths:** each step has a `kind` (`read`, `build`, `cert`, `write`), an optional `note` and an optional `url`.
+- **Lab notes:** copy `src/content/notes/_TEMPLATE.md` to a dated name such as `2026-10-14-vpc-peering-lab.md`. See below.
 - **Now page:** edit the three lists at the top of `src/pages/now.astro`.
 - **About page:** placeholder copy. Rewrite it, and decide what you want public.
+
+## Lab notes
+
+`/notes/` is the public middle tier between private study (TaskMesh) and polished writing:
+
+```
+TaskMesh (private)  ->  /notes/ (public, rough)  ->  /writing/ (polished)
+```
+
+- **Kept apart on purpose.** Notes never appear on the homepage, `/writing/`, `/hub/`, the spoke pages or the main `/rss.xml`. They have their own index, their own feed at `/notes/rss.xml`, and a "working note" banner on every page.
+- **Status** shows how finished a note is: `seedling` (raw), `growing` (cleaned up), `evergreen` (settled).
+- **`path:`** ties a note to a learning path by filename. The path page then lists its notes under "Lab notes on this path".
+- **`promotedTo:`** points at a post in `/writing/` once the note has grown into one. The note's banner then sends readers to the post.
+- **Tags are free-form** here, unlike the rest of the taxonomy.
+- **Before promoting anything from TaskMesh:** nothing from client work, the ValueCentrix demo instance or internal plans. Publish the general lesson, not where it came from.
 
 ## Deploying
 
