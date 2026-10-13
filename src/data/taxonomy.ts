@@ -115,3 +115,23 @@ export const stepKindLabel: Record<(typeof STEP_KINDS)[number], string> = {
   cert: 'Certify',
   write: 'Write up',
 };
+
+// Lab-note maturity. A note starts as a seedling and is promoted to a post in
+// /writing/ when it is worth polishing. Colors follow the site's metaphor:
+// amber (desired, not yet reconciled) to teal (observed, settled).
+export const NOTE_STATUSES = ['seedling', 'growing', 'evergreen'] as const;
+export type NoteStatus = (typeof NOTE_STATUSES)[number];
+export const noteStatusMeta: Record<NoteStatus, { label: string; blurb: string }> = {
+  seedling: {
+    label: 'Seedling',
+    blurb: 'Raw capture from a study session or lab. Unedited, and possibly wrong.',
+  },
+  growing: {
+    label: 'Growing',
+    blurb: 'Revisited and cleaned up, but still incomplete.',
+  },
+  evergreen: {
+    label: 'Evergreen',
+    blurb: 'Settled enough to stand on its own. A candidate for a proper write-up.',
+  },
+};

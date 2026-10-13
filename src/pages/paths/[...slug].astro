@@ -1,7 +1,8 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPublished } from '../../lib/content';
+import NoteCard from '../../components/NoteCard.astro';
+import { byDateDesc, getPublished } from '../../lib/content';
 import { levelLabel, spokeMeta, stepKindLabel } from '../../data/taxonomy';
 
 export async function getStaticPaths() {
@@ -12,6 +13,9 @@ export async function getStaticPaths() {
 const { path } = Astro.props;
 const { data } = path;
 const { Content } = await render(path);
+
+// Lab notes that name this path in their `path` frontmatter.
+const notes = (await getPublished('notes')).filter((n) => n.data.path?.id === path.id).sort(byDateDesc);
 ---
 
 <BaseLayout title={data.title} description={data.description} noindex={data.draft}>
@@ -52,5 +56,21 @@ const { Content } = await render(path);
     <div class="prose" style="margin-top: 2rem">
       <Content />
     </div>
+
+    {
+      notes.length > 0 && (
+        <section class="section" style="max-width: var(--measure)">
+          <div class="section-head">
+            <h2>Lab notes on this path</h2>
+            <a href="/notes/">All lab notes</a>
+          </div>
+          <ul class="post-list">
+            {notes.map((note) => (
+              <NoteCard note={note} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
   </article>
 </BaseLayout>

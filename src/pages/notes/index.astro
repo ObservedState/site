@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteCard from '../../components/NoteCard.astro';
+import { NOTE_STATUSES, noteStatusMeta } from '../../data/taxonomy';
+import { byDateDesc, getPublished } from '../../lib/content';
+import { SITE } from '../../config';
+
+const notes = (await getPublished('notes')).sort(byDateDesc);
+
+// Group by month so the page reads like a log.
+const monthLabel = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' });
+const months: { label: string; notes: typeof notes }[] = [];
+for (const note of notes) {
+  const label = monthLabel(note.data.pubDate);
+  const last = months.at(-1);
+  if (last && last.label === label) last.notes.push(note);
+  else months.push({ label, notes: [note] });
+}
+---
+
+<BaseLayout
+  title="Lab notes"
+  description="Rough working notes from study sessions and labs: ServiceNow ITOM, AWS, infrastructure as code and AI, captured as I go."
+  feed={{ title: `${SITE.name} Lab Notes`, href: '/notes/rss.xml' }}
+>
+  <div class="container section">
+    <p class="eyebrow">Lab Notes</p>
+    <h1>Lab notes</h1>
+    <p class="lede">
+      Working notes from study sessions and labs, published as I go. They are rough on purpose. The ones that hold up
+      get rewritten properly in <a href="/writing/">Writing</a>. The plan they follow is in
+      <a href="/paths/">Paths</a>, and the monthly look back is the <a href="/drift-log/">Drift Log</a>.
+    </p>
+
+    <dl class="status-legend" aria-label="Note status">
+      {
+        NOTE_STATUSES.map((status) => (
+          <div>
+            <dt>
+              <span class={`chip chip--${status}`}>{noteStatusMeta[status].label}</span>
+            </dt>
+            <dd>{noteStatusMeta[status].blurb}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <p class="muted">
+      These have their own <a href="/notes/rss.xml">RSS feed</a>, separate from the main one.
+    </p>
+
+    {
+      months.length > 0 ? (
+        months.map((month) => (
+          <section class="note-month">
+            <h2>{month.label}</h2>
+            <ul class="post-list">
+              {month.notes.map((note) => (
+                <NoteCard note={note} />
+              ))}
+            </ul>
+          </section>
+        ))
+      ) : (
+        <p class="empty" style="margin-top: 2rem">
+          The first notes are coming.
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '../lib/format';
+import { noteStatusMeta } from '../data/taxonomy';
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+}
+
+const { note } = Astro.props;
+const { data } = note;
+---
+
+<li class="card card--note">
+  <p class="meta">
+    <time datetime={isoDate(data.pubDate)}>{formatDate(data.pubDate)}</time>
+    {
+      data.updatedDate && (
+        <>
+          · updated <time datetime={isoDate(data.updatedDate)}>{formatDate(data.updatedDate)}</time>
+        </>
+      )
+    }
+  </p>
+  <h3><a href={`/notes/${note.id}/`}>{data.title}</a></h3>
+  {data.summary && <p>{data.summary}</p>}
+  <ul class="chips" aria-label="Note details">
+    {data.draft && <li class="chip chip--draft">draft</li>}
+    <li class={`chip chip--${data.status}`} title={noteStatusMeta[data.status].blurb}>
+      {noteStatusMeta[data.status].label}
+    </li>
+    {data.promotedTo && <li class="chip chip--promoted">promoted</li>}
+    {data.tags.map((tag) => <li class="chip">#{tag}</li>)}
+  </ul>
+</li>
