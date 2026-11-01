@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -31,7 +31,7 @@ jobs:
       - run: npm run check
       - run: npm run build
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: site
           path: dist
@@ -45,7 +45,7 @@ jobs:
     # Do not add `environment:` here without updating the IAM trust policy:
     # it changes the OIDC `sub` claim from ref:refs/heads/main to environment:<name>.
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: site
           path: dist
